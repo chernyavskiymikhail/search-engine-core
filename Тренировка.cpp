@@ -1,8 +1,7 @@
-﻿// Тренировка.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
+﻿// Lesson 7 Search Engine Core.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
 //
 
 #include <iostream>
-#include <map>
 #include <set>
 #include <vector>
 #include <string>
@@ -11,20 +10,23 @@
 
 using namespace std;
 
+// считывает строку
 string ReadLine()
 {
-    string line;
-    getline(cin, line);
-    return line;
+    string str;
+    getline(cin, str);
+    return str;
 }
 
-int ReadNumber()
+//считывает число
+int ReadLineNumber()
 {
-    int number;
+    int number = 0;
     cin >> number;
     return number;
 }
 
+//парсинг (const string& text) в вектор vector<string> words
 vector<string> SplitInToWords(const string& text)
 {
     vector<string> words;
@@ -50,8 +52,8 @@ vector<string> SplitInToWords(const string& text)
     }
     return words;
 }
-
-set<string> ParseStopWords(const string& text)
+// парсинг строки стоп-слов (const string& text) в множество set <string> stop_words
+set <string> ParseStopWords(const string& text)
 {
     set<string> stop_words;
     for (const string& word : SplitInToWords(text))
@@ -61,7 +63,11 @@ set<string> ParseStopWords(const string& text)
     return stop_words;
 }
 
-vector<string> SplitInToWordsWithoutStopWords(const string& text, const set<string> stop_words)
+//проходит по строке const string& text и если слово не входит в множество
+//const set<string> stop_words помещает это слово в vector<string> words
+vector<string> SplitInToWordsNoStop
+(const string& text,
+    const set<string> stop_words)
 {
     vector<string> words;
     for (const string& word : SplitInToWords(text))
@@ -75,16 +81,19 @@ vector<string> SplitInToWordsWithoutStopWords(const string& text, const set<stri
 }
 
 void AddDocument
-    (vector<pair<int, vector<string>>>& documents,
+(vector<pair<int, vector<string>>>& documents,
     const set<string>& stop_words,
-    int document_id, const string& document)
+    int document_id,
+    const string& document)
 {
-    documents.push_back(pair{document_id, SplitInToWordsWithoutStopWords(document,stop_words)});
+    documents.push_back(pair{ document_id, SplitInToWordsNoStop(document, stop_words) });
 }
 
-set<string> ParseQueryWithoutStopWords(const string& text, const set<string>& stop_words)
+// создает множество set <string> query_words из строки запроса уже без стоп-слов
+set<string> ParseQuery
+(const string& text, const set<string>& stop_words)
 {
-    set<string> query_words;
+    set <string> query_words;
     for (const string& word : SplitInToWords(text))
     {
         if (stop_words.count(word) == 0)
@@ -95,26 +104,34 @@ set<string> ParseQueryWithoutStopWords(const string& text, const set<string>& st
     return query_words;
 }
 
-int MatchDocument(const pair<int, vector<string>>& content, set<string>& query_words)
+// возвращает релевантность документа
+int MatchDocument
+(const pair<int, vector<string>>& content,
+    const set<string>& query_words)
 {
     int relevance = 0;
     for (const string& word : content.second)
+    {
         if (query_words.count(word) == 1)
         {
             ++relevance;
         }
+    }
     return relevance;
 }
 
+//возвращает вектор vector<pair<int, int>> matched_documents
+// с id документа и релевантностью
+
 vector<pair<int, int>> FindDocuments
-    (const vector<pair<int, vector<string>>>& documents,
+(const vector<pair<int, vector<string>>>& documents,
     const set<string>& stop_words,
     const string& query)
 
 {
     vector < pair<int, int>> matched_documents;
-    set<string> query_words = ParseQueryWithoutStopWords(query, stop_words);
-    
+    set<string> query_words = ParseQuery(query, stop_words);
+
     for (const auto& document : documents)
     {
         if (MatchDocument(document, query_words) > 0)
@@ -126,22 +143,27 @@ vector<pair<int, int>> FindDocuments
     return matched_documents;
 }
 
+
 int main()
 {
     const string stop_words_joined = ReadLine();
     const set<string> stop_words = ParseStopWords(stop_words_joined);
 
+    // Считываем документы
     vector<pair<int, vector<string>>> documents;
-    const int document_count = ReadNumber();
+    const int document_count = ReadLineNumber();
     ReadLine();
     for (int document_id = 0; document_id < document_count; ++document_id)
     {
         AddDocument(documents, stop_words, document_id, ReadLine());
     }
+
     const string query = ReadLine();
+
+    // Выводим результаты поиска по запросу query
     for (auto& [document_id, relevance] : FindDocuments(documents, stop_words, query))
     {
-        cout << "{ document_id = " << document_id << ", relevance = " << relevance << " }" << endl;
+        cout << "{ document_id = "s << document_id << ", relevance = "s << relevance << " }"s
+            << endl;
     }
-
 }
