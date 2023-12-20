@@ -53,6 +53,7 @@ vector<string> SplitInToWords(const string& text)
     }
     return words;
 }
+
 // парсинг строки стоп-слов (const string& text) в множество set <string> stop_words
 set <string> ParseStopWords(const string& text)
 {
@@ -81,8 +82,9 @@ vector<string> SplitInToWordsNoStop
     return words;
 }
 
+//формирует базу данных
 void AddDocument
-(vector<pair<int, vector<string>>>& documents,
+    (vector<pair<int, vector<string>>>& documents,
     const set<string>& stop_words,
     int document_id,
     const string& document)
@@ -121,44 +123,35 @@ int MatchDocument
     return relevance;
 }
 
-//возвращает вектор vector<pair<int, int>> matched_documents
-// с id документа и релевантностью
-
+// Для каждого документа возвращает его релевантность и id
 vector<pair<int, int>> FindAllDocuments
     (const vector<pair<int, vector<string>>>& documents,
     const set<string>& query_words)
 {
-    vector < pair<int, int>> matched_documents;
+    vector<pair<int, int>> relevant_documents;
     for (const auto& document : documents)
     {
-            matched_documents.push_back
+        relevant_documents.push_back
             (pair{ MatchDocument(document, query_words), document.first });        
     }
-    return matched_documents;
+    return relevant_documents;
 }
-
-
-/*
-// Для каждого документа возвращает его релевантность и id
-vector<pair<int, int>> FindAllDocuments(const vector<pair<int, vector<string>>>& documents,
-    const set<string>& query_words)
-{
-    // Превратите функцию FindDocuments в FindAllDocuments
-    // Первым элементом возвращаемых пар идёт релевантность документа, а вторым - его id
-}
-*/
-
 
 // Возвращает топ-5 самых релевантных документов в виде пар: {id, релевантность}
 vector<pair<int, int>> FindTopDocuments
     (const vector<pair<int, vector<string>>>& documents,
     const set<string>& stop_words, const string& raw_query) 
 {
-    
-    
-    
-    
-    // Напишите функцию, используя FindAllDocuments
+    vector<pair<int, int>> top_documents;
+    const set<string> query_words = ParseQuery(raw_query, stop_words);
+    top_documents = FindAllDocuments(documents, query_words);
+    sort(top_documents.begin(), top_documents.end());
+    reverse(top_documents.begin(), top_documents.end());
+    if (top_documents.size() > MAX_RESULT_DOCUMENT_COUNT)
+    {
+        top_documents.resize(MAX_RESULT_DOCUMENT_COUNT);
+    }
+    return top_documents;    
 }
 
 int main()
@@ -176,9 +169,9 @@ int main()
     }
 
     const string query = ReadLine();
-    // Вместо FindDocuments используйте FindTopDocuments
+ 
     // Выводим результаты поиска по запросу query
-    for (auto& [document_id, relevance] : FindDocuments(documents, stop_words, query))
+    for (auto& [relevance, document_id] : FindTopDocuments(documents, stop_words, query))
     {
         cout << "{ document_id = "s << document_id << ", relevance = "s << relevance << " }"s
             << endl;
@@ -194,3 +187,15 @@ a strange brown creature was seen in the box of oranges
 a strange animal with big ears is building a house for its friends
 cheburashka with big ears likes oranges
 */
+
+/*
+// Для каждого документа возвращает его релевантность и id
+vector<pair<int, int>> FindAllDocuments(const vector<pair<int, vector<string>>>& documents,
+    const set<string>& query_words)
+{
+    // Превратите функцию FindDocuments в FindAllDocuments
+    // Первым элементом возвращаемых пар идёт релевантность документа, а вторым - его id
+}
+*/
+
+
