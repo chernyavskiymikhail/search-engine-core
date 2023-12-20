@@ -144,6 +144,24 @@ vector<pair<int, int>> FindDocuments
 }
 
 
+/*
+// Для каждого документа возвращает его релевантность и id
+vector<pair<int, int>> FindAllDocuments(const vector<pair<int, vector<string>>>& documents,
+    const set<string>& query_words)
+{
+    // Превратите функцию FindDocuments в FindAllDocuments
+    // Первым элементом возвращаемых пар идёт релевантность документа, а вторым - его id
+}
+*/
+
+/*
+// Возвращает топ-5 самых релевантных документов в виде пар: {id, релевантность}
+vector<pair<int, int>> FindTopDocuments(const vector<pair<int, vector<string>>>& documents,
+                                        const set<string>& stop_words, const string& raw_query) {
+    // Напишите функцию, используя FindAllDocuments
+}
+*/
+
 int main()
 {
     const string stop_words_joined = ReadLine();
@@ -159,7 +177,7 @@ int main()
     }
 
     const string query = ReadLine();
-
+    // Вместо FindDocuments используйте FindTopDocuments
     // Выводим результаты поиска по запросу query
     for (auto& [document_id, relevance] : FindDocuments(documents, stop_words, query))
     {
