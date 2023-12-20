@@ -9,6 +9,7 @@
 #include <algorithm>
 
 using namespace std;
+int MAX_RESULT_DOCUMENT_COUNT = 5;
 
 // считывает строку
 string ReadLine()
@@ -123,22 +124,15 @@ int MatchDocument
 //возвращает вектор vector<pair<int, int>> matched_documents
 // с id документа и релевантностью
 
-vector<pair<int, int>> FindDocuments
-(const vector<pair<int, vector<string>>>& documents,
-    const set<string>& stop_words,
-    const string& query)
-
+vector<pair<int, int>> FindAllDocuments
+    (const vector<pair<int, vector<string>>>& documents,
+    const set<string>& query_words)
 {
     vector < pair<int, int>> matched_documents;
-    set<string> query_words = ParseQuery(query, stop_words);
-
     for (const auto& document : documents)
     {
-        if (MatchDocument(document, query_words) > 0)
-        {
             matched_documents.push_back
-            (pair{ document.first, MatchDocument(document, query_words) });
-        }
+            (pair{ MatchDocument(document, query_words), document.first });        
     }
     return matched_documents;
 }
@@ -154,13 +148,18 @@ vector<pair<int, int>> FindAllDocuments(const vector<pair<int, vector<string>>>&
 }
 */
 
-/*
+
 // Возвращает топ-5 самых релевантных документов в виде пар: {id, релевантность}
-vector<pair<int, int>> FindTopDocuments(const vector<pair<int, vector<string>>>& documents,
-                                        const set<string>& stop_words, const string& raw_query) {
+vector<pair<int, int>> FindTopDocuments
+    (const vector<pair<int, vector<string>>>& documents,
+    const set<string>& stop_words, const string& raw_query) 
+{
+    
+    
+    
+    
     // Напишите функцию, используя FindAllDocuments
 }
-*/
 
 int main()
 {
