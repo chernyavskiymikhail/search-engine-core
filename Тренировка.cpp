@@ -9,7 +9,7 @@
 #include <algorithm>
 
 using namespace std;
-int MAX_RESULT_DOCUMENT_COUNT = 5;
+const int MAX_RESULT_DOCUMENT_COUNT = 5;
 
 // считывает строку
 string ReadLine()
@@ -131,8 +131,11 @@ vector<pair<int, int>> FindAllDocuments
     vector<pair<int, int>> relevant_documents;
     for (const auto& document : documents)
     {
-        relevant_documents.push_back
-            (pair{ MatchDocument(document, query_words), document.first });        
+        if (MatchDocument(document, query_words) > 0)
+        {
+            relevant_documents.push_back
+            (pair{ MatchDocument(document, query_words), document.first });
+        }
     }
     return relevant_documents;
 }
@@ -189,13 +192,14 @@ cheburashka with big ears likes oranges
 */
 
 /*
-// Для каждого документа возвращает его релевантность и id
-vector<pair<int, int>> FindAllDocuments(const vector<pair<int, vector<string>>>& documents,
-    const set<string>& query_words)
-{
-    // Превратите функцию FindDocuments в FindAllDocuments
-    // Первым элементом возвращаемых пар идёт релевантность документа, а вторым - его id
-}
+и в на
+7
+ухоженный кот красный
+пушистый пёс красивый ухоженный
+кот и ошейник ухоженный
+пушистый ухоженный пёс
+кот пушистый ошейник
+ухоженный кот и пёс
+хвост и выразительные глаза
+пушистый ухоженный кот
 */
-
-
